@@ -1,5 +1,9 @@
+/* Import a clean font for site name */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap');
+
 .navbar-brand img {
     width: 50px;
+
 }
 
 /* Sticky header styles for custom navbar */
@@ -14,7 +18,6 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
-    color: black;
 }
 
 /* Ensure page content is not hidden by the fixed header */
@@ -22,6 +25,15 @@
     padding-top: 80px; /* space for fixed header */
 }
 
+/* Brand name next to logo */
+.site-name {
+    font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: black; /* default color, can be customized */
+    line-height: 1;
+    display: inline-block;
+}
 
 @media (max-width: 640px) {
     .site-name { display: none; }
