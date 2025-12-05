@@ -8,7 +8,7 @@ $view->setLayout(null);
 
 ?>
 
-<h1><?= $exception->getCode() . " - " . $exception->getMessage() ?></h1>
+    <h1><?= $exception->getCode() . " - " . $exception->getMessage() ?></h1>
 
 <?php
 if ($showDetail && $exception->getCode() != 500) :

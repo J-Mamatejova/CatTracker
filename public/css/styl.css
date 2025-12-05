@@ -1,7 +1,30 @@
-.navbar {
-    border-bottom: 1px solid grey;
-}
-
 .navbar-brand img {
     width: 50px;
+}
+
+/* Sticky header styles for custom navbar */
+.navbar-custom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    /* Navbar base color */
+    background: navajowhite;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    color: black;
+}
+
+/* Ensure page content is not hidden by the fixed header */
+.web-content {
+    padding-top: 80px; /* space for fixed header */
+}
+
+
+@media (max-width: 640px) {
+    .site-name { display: none; }
+    .navbar-brand img { width: 40px; }
+    .web-content { padding-top: 92px; }
 }

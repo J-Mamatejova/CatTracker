@@ -11,7 +11,7 @@ $view->setLayout('auth');
         <div class="col-sm-9 col-md-7 col-lg-5">
             You have logged out. <br>
             Again <a href="<?= App\Configuration::LOGIN_URL ?>">log in</a> or return <a
-                    href="<?= $link->url("home.index") ?>">back</a> to the home page?
+                href="<?= $link->url("home.index") ?>">back</a> to the home page?
         </div>
     </div>
 </div>

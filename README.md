@@ -21,10 +21,10 @@ All necessary services are set in `docker-compose.yml` file. After starting them
 ## Other notes:
 
 - __WWW document root__ is set to the `public` in the project directory.
+- This repository contains the CatTracker application based on a small teaching MVC framework.
 - The website is available at [http://localhost/](http://localhost/).
 - The server includes an extension for PHP code debugging [__Xdebug 3__](https://xdebug.org/), uses the  
   port __9003__ and works in "auto-start" mode.
 - PHP contains the __PDO__ extension.
 - The database server is available locally on the port __3306__. The default login details can be found in `.env` file.
 - Adminer is available at [http://localhost:8080/](http://localhost:8080/)
-
