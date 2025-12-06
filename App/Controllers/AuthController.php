@@ -53,15 +53,15 @@ class AuthController extends BaseController
             }
         }
 
-        $message = $logged === false ? 'Bad username or password' : null;
-        // If request came from modal, redirect back to profile with error params so modal can show it
-        if ($request->hasValue('submit')) {
-            $params = $message ? ['loginError' => 1, 'loginMessage' => $message] : [];
-            return $this->redirect($this->url('profile.index', $params));
-        }
+        $message = $logged === false ? 'wrong username or password' : null;
+         // If request came from modal, redirect back to profile with error params so modal can show it
+         if ($request->hasValue('submit')) {
+             $params = $message ? ['loginError' => 1, 'loginMessage' => $message] : [];
+             return $this->redirect($this->url('profile.index', $params));
+         }
 
-        return $this->html(compact("message"));
-    }
+         return $this->html(compact("message"));
+     }
 
     /**
      * Handles user signup (registration).
@@ -90,6 +90,16 @@ class AuthController extends BaseController
             return $this->redirect($this->url('profile.index', ['signupError' => 1, 'signupMessage' => $msg]));
         }
 
+        // Password requirements: at least 5 characters and at least one number
+        if (strlen($password) < 5) {
+            $msg = 'password must be at least 5 characters';
+            return $this->redirect($this->url('profile.index', ['signupError' => 1, 'signupMessage' => $msg]));
+        }
+        if (!preg_match('/\d/', $password)) {
+            $msg = 'password must contain at least one number';
+            return $this->redirect($this->url('profile.index', ['signupError' => 1, 'signupMessage' => $msg]));
+        }
+
         // Ensure users table exists and insert new user
         try {
             $conn = \Framework\DB\Connection::getInstance();
@@ -107,7 +117,7 @@ class AuthController extends BaseController
             $stmt->execute([$username]);
             $existing = $stmt->fetch();
             if ($existing) {
-                $msg = 'Username already taken';
+                $msg = 'name alrdy taken';
                 return $this->redirect($this->url('profile.index', ['signupError' => 1, 'signupMessage' => $msg]));
             }
 
@@ -138,6 +148,7 @@ class AuthController extends BaseController
     public function logout(Request $request): Response
     {
         $this->app->getAuthenticator()->logout();
-        return $this->html();
+        // redirect to home page immediately after logout
+        return $this->redirect($this->url('home.index'));
     }
 }

@@ -34,16 +34,17 @@
         const signupError = getParam('signupError');
         const signupMessage = getParam('signupMessage');
 
-        // Helper to inject alert into modal body
-        function showModalWithMessage(modalId, message, isError = true) {
+        // Helper to inject alert into dedicated alert container and show modal
+        function showModalWithMessage(modalId, alertContainerId, message, isError = true) {
             const modalEl = document.getElementById(modalId);
             if (!modalEl) return;
-            const body = modalEl.querySelector('.modal-body');
-            if (body) {
-                const alert = document.createElement('div');
-                alert.className = isError ? 'alert alert-danger' : 'alert alert-success';
-                alert.textContent = message;
-                body.insertBefore(alert, body.firstChild);
+            const alertContainer = document.getElementById(alertContainerId);
+            if (alertContainer) {
+                alertContainer.innerHTML = '';
+                const wrapper = document.createElement('div');
+                wrapper.className = isError ? 'alert alert-danger' : 'alert alert-success';
+                wrapper.textContent = message;
+                alertContainer.appendChild(wrapper);
             }
             // Use Bootstrap's modal show API
             const modal = new bootstrap.Modal(modalEl);
@@ -51,10 +52,10 @@
         }
 
         if (loginError && loginMessage) {
-            showModalWithMessage('loginModal', decodeURIComponent(loginMessage));
+            showModalWithMessage('loginModal', 'loginModalAlert', loginMessage);
         }
         if (signupError && signupMessage) {
-            showModalWithMessage('signupModal', decodeURIComponent(signupMessage));
+            showModalWithMessage('signupModal', 'signupModalAlert', signupMessage);
         }
     })();
 </script>

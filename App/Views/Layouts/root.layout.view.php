@@ -83,6 +83,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div id="loginModalAlert"></div>
                     <div class="mb-3">
                         <label for="modal-username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="modal-username" name="username" required>
@@ -111,6 +112,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div id="signupModalAlert"></div>
                     <div class="mb-3">
                         <label for="signup-username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="signup-username" name="username" required>
