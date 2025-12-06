@@ -1,0 +1,8 @@
+/* Local wrapper for Leaflet CSS - imports official stylesheet from CDN */
+@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+
+/* small local tweaks to ensure map fills its container */
+.leaflet-container {
+    background: #fff;
+}
+
