@@ -8,7 +8,6 @@
         <div class="col mt-5">
             <div class="text-center py-4">
                 <h2>Pomôžte nám sledovať a chrániť uličné mačky</h2>
-                <h3>Version <?= App\Configuration::FW_VERSION ?></h3>
 
                 <!-- Two images with text wrapping: left and right floats -->
                 <img src="<?= $link->asset('images/catPic1.jpg') ?>" alt="catPic1" class="img-fluid float-start me-4 mb-3"

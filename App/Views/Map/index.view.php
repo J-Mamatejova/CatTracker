@@ -13,7 +13,7 @@
 </head>
 <body>
 <div class="container-fluid mt-3">
-    <h2>Mapa Slovenska</h2>
+    <h2>Mapa</h2>
     <div id="map" style="height:75vh; width:100%; border:1px solid #ccc; border-radius:6px;"></div>
 </div>
 <script>

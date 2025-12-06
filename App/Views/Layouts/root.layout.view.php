@@ -59,11 +59,8 @@
                     <a class="nav-link" href="<?= $link->url('auth.logout') ?>">Log out</a>
                 </li>
             <?php } else { ?>
-                <li class="nav-item me-2">
-                    <a class="nav-link btn btn-outline-dark " href="<?= App\Configuration::LOGIN_URL ?>">Log in</a>
-                </li>
                 <li class="nav-item">
-                    <a class="nav-link btn btn-outline-dark" href="<?= $link->url('auth.signup') ?>">Sign up</a>
+                    <a class="nav-link btn btn-outline-dark" href="<?= $link->url('profile.index') ?>">Profile</a>
                 </li>
             <?php } ?>
         </ul>
@@ -75,4 +72,65 @@
     </div>
 </div>
 </body>
+
+<!-- Login modal (Bootstrap) -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="<?= $link->url('auth.login') ?>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Log in</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="modal-username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="modal-username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modal-password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="modal-password" name="password" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="submit" class="btn btn-primary">Log in</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Sign up modal (Bootstrap) -->
+<div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post" action="<?= $link->url('auth.signup') ?>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signupModalLabel">Sign up</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="signup-username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="signup-username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="signup-password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="signup-password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="signup-password-confirm" class="form-label">Confirm password</label>
+                        <input type="password" class="form-control" id="signup-password-confirm" name="password_confirm" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="submit" class="btn btn-primary">Sign up</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 </html>

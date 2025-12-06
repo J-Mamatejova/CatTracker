@@ -54,7 +54,77 @@ class AuthController extends BaseController
         }
 
         $message = $logged === false ? 'Bad username or password' : null;
+        // If request came from modal, redirect back to profile with error params so modal can show it
+        if ($request->hasValue('submit')) {
+            $params = $message ? ['loginError' => 1, 'loginMessage' => $message] : [];
+            return $this->redirect($this->url('profile.index', $params));
+        }
+
         return $this->html(compact("message"));
+    }
+
+    /**
+     * Handles user signup (registration).
+     * - validates input
+     * - creates `users` table if needed
+     * - inserts new user with password hash
+     * - logs user in by storing identity in session
+     */
+    public function signup(Request $request): Response
+    {
+        // Only handle POST from the modal form
+        if (!$request->hasValue('submit')) {
+            return $this->redirect($this->url('profile.index'));
+        }
+
+        $username = trim($request->value('username') ?? '');
+        $password = $request->value('password') ?? '';
+        $passwordConfirm = $request->value('password_confirm') ?? '';
+
+        if ($username === '' || $password === '') {
+            $msg = 'Username and password are required';
+            return $this->redirect($this->url('profile.index', ['signupError' => 1, 'signupMessage' => $msg]));
+        }
+        if ($password !== $passwordConfirm) {
+            $msg = 'Passwords do not match';
+            return $this->redirect($this->url('profile.index', ['signupError' => 1, 'signupMessage' => $msg]));
+        }
+
+        // Ensure users table exists and insert new user
+        try {
+            $conn = \Framework\DB\Connection::getInstance();
+
+            $createSql = "CREATE TABLE IF NOT EXISTS `users` (
+                `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `username` VARCHAR(100) NOT NULL UNIQUE,
+                `password_hash` VARCHAR(255) NOT NULL,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+            $conn->prepare($createSql)->execute();
+
+            // Check existing username
+            $stmt = $conn->prepare('SELECT id FROM users WHERE username = ? LIMIT 1');
+            $stmt->execute([$username]);
+            $existing = $stmt->fetch();
+            if ($existing) {
+                $msg = 'Username already taken';
+                return $this->redirect($this->url('profile.index', ['signupError' => 1, 'signupMessage' => $msg]));
+            }
+
+            // Insert user
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $ins = $conn->prepare('INSERT INTO users (username, password_hash) VALUES (?, ?)');
+            $ins->execute([$username, $hash]);
+
+            // Log the user in by setting session identity directly (use DummyUser for simplicity)
+            $this->app->getSession()->set(\App\Configuration::IDENTITY_SESSION_KEY, new \Framework\Auth\DummyUser($username));
+
+            // Redirect to profile (user logged in)
+            return $this->redirect($this->url('profile.index'));
+        } catch (\Throwable $e) {
+            $msg = 'Signup failed: ' . $e->getMessage();
+            return $this->redirect($this->url('profile.index', ['signupError' => 1, 'signupMessage' => $msg]));
+        }
     }
 
     /**
