@@ -51,18 +51,10 @@
                 </a>
             </li>
 
-            <?php if ($user && $user->isLoggedIn()) { ?>
-                <li class="nav-item me-2">
-                    <span class="navbar-text">Logged in: <strong><?= htmlspecialchars($user->getName()) ?></strong></span>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= $link->url('auth.logout') ?>">Log out</a>
-                </li>
-            <?php } else { ?>
-                <li class="nav-item">
-                    <a class="nav-link btn btn-outline-dark" href="<?= $link->url('profile.index') ?>">Profile</a>
-                </li>
-            <?php } ?>
+            <!-- Always show Profile button; profile UI controls login/register via modal -->
+            <li class="nav-item">
+                <a class="nav-link btn btn-outline-dark" href="<?= $link->url('profile.index') ?>">Profile</a>
+            </li>
         </ul>
     </div>
 </nav>
@@ -77,7 +69,7 @@
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form method="post" action="<?= $link->url('auth.login') ?>">
+            <form method="post" action="<?= $link->url('user.login') ?>">
                 <div class="modal-header">
                     <h5 class="modal-title" id="loginModalLabel">Log in</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -85,8 +77,8 @@
                 <div class="modal-body">
                     <div id="loginModalAlert"></div>
                     <div class="mb-3">
-                        <label for="modal-username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="modal-username" name="username" required>
+                        <label for="modal-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="modal-email" name="email" required>
                     </div>
                     <div class="mb-3">
                         <label for="modal-password" class="form-label">Password</label>
@@ -106,7 +98,7 @@
 <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form method="post" action="<?= $link->url('auth.signup') ?>">
+            <form method="post" action="<?= $link->url('user.register') ?>">
                 <div class="modal-header">
                     <h5 class="modal-title" id="signupModalLabel">Sign up</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -116,6 +108,10 @@
                     <div class="mb-3">
                         <label for="signup-username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="signup-username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="signup-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="signup-email" name="email" required>
                     </div>
                     <div class="mb-3">
                         <label for="signup-password" class="form-label">Password</label>

@@ -2,6 +2,7 @@
 /** @var \Framework\Support\LinkGenerator $link */
 /** @var \Framework\Core\IAuthenticator $auth */
 /** @var array $cats */
+/** @var int $catCount */
 
 use App\Configuration;
 ?>
@@ -9,10 +10,16 @@ use App\Configuration;
 <div class="container-fluid mt-4">
     <h2>Cat Database</h2>
 
+    <!-- Debug panel -->
+    <div class="mb-3">
+        <div>Total cats: <?= isset($cats) ? count($cats) : 'N/A' ?></div>
+    </div>
+
     <?php if (empty($cats)) { ?>
         <div class="alert alert-info">No cats found yet.</div>
     <?php } else { ?>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Always 3 columns per row on all breakpoints -->
+        <div class="row row-cols-3 g-4">
             <?php foreach ($cats as $cat):
                 // Support both model objects and associative arrays
                 if (is_array($cat)) {
@@ -49,7 +56,8 @@ use App\Configuration;
                 ?>
                 <div class="col">
                     <div class="card h-100">
-                        <img src="<?= $imgSrc ?>" class="card-img-top" alt="<?= $name ?>" style="object-fit:cover; height:200px;">
+                        <!-- Make images taller (300px) and cover the card width -->
+                        <img src="<?= $imgSrc ?>" class="card-img-top" alt="<?= $name ?>" style="object-fit:cover; height:300px;">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title"><?= $name ?></h5>
                             <p class="card-text"><?= $short ?></p>

@@ -43,7 +43,8 @@ class CatDatabaseController extends BaseController
     {
         try {
             return $this->html([
-                'cats' => Cats::getAll()
+                'cats' => Cats::getAll(),
+                'catCount' => Cats::getCount(),
             ]);
         } catch (Exception $e) {
             throw new HttpException(500, 'DB Chyba: ' . $e->getMessage());
