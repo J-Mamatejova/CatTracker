@@ -55,7 +55,7 @@ class CatDatabaseController extends BaseController
     }
 
     /**
-     * Save new cat (called by AJAX/form POST)
+     * Save new cat (called by AJAX/form POST) - also handles updates when id is provided
      */
     public function save(Request $request): Response
     {
@@ -70,6 +70,18 @@ class CatDatabaseController extends BaseController
             throw new HttpException(403, 'Authentication required');
         }
 
+        // Ensure cats table has user_id column (best-effort)
+        try {
+            $cols = \Framework\Core\Model::executeRawSQL('DESCRIBE cats');
+            $colNames = array_column($cols, 'Field');
+            if (!in_array('user_id', $colNames)) {
+                Connection::getInstance()->prepare('ALTER TABLE cats ADD COLUMN user_id INT UNSIGNED NULL')->execute();
+            }
+        } catch (Exception $e) {
+            // ignore - continue
+        }
+
+        $id = (int)$request->value('id');
         $name = trim($request->value('meno') ?? '');
         $text = trim($request->value('text') ?? '');
         $status = trim($request->value('status') ?? '');
@@ -82,7 +94,6 @@ class CatDatabaseController extends BaseController
         if ($text === '') {
             $errors[] = 'Text is required';
         }
-
         if (count($errors) > 0) {
             throw new HttpException(400, implode('; ', $errors));
         }
@@ -90,6 +101,7 @@ class CatDatabaseController extends BaseController
         // Handle file upload if provided
         $uploaded = $request->file('fotka');
         $fileName = '';
+        $oldFileName = '';
         if ($uploaded !== null && $uploaded->getName() != '') {
             // Basic upload health check
             if (!$uploaded->isOk()) {
@@ -127,9 +139,30 @@ class CatDatabaseController extends BaseController
             $fileName = $unique;
         }
 
-        // Create model and save
+        // Begin transaction
+        $conn = Connection::getInstance();
+        $inTransaction = false;
         try {
-            $cat = new Cats();
+            $conn->beginTransaction();
+            $inTransaction = true;
+
+            if ($id > 0) {
+                // Editing existing cat - check ownership
+                $cat = Cats::getOne($id);
+                if ($cat === null) {
+                    throw new HttpException(404);
+                }
+                $ownerId = $cat->getUserId();
+                if ($ownerId !== null && $ownerId !== $identity->getId()) {
+                    throw new HttpException(403, 'You are not allowed to edit this cat');
+                }
+                // remember old file to delete only after successful commit
+                $oldFileName = $cat->getFotka();
+            } else {
+                $cat = new Cats();
+                $cat->setUserId($identity->getId());
+            }
+
             $cat->setMeno($name);
             $cat->setText($text);
             $cat->setStatus($status);
@@ -137,45 +170,150 @@ class CatDatabaseController extends BaseController
             if ($fileName !== '') {
                 $cat->setFotka($fileName);
             }
-            $cat->save();
 
-            // Store location referencing this cat (latitude/longitude/city required)
+            $cat->save();
             $catId = $cat->getId();
+
+            // Location handling
             $latitude = $request->value('latitude');
             $longitude = $request->value('longitude');
             $city = $request->value('city') ?? '';
 
-            if ($latitude != '' && $longitude != '') {
-                try {
-                    $locStmt = Connection::getInstance()->prepare('INSERT INTO locations (cat_id, city, latitude, longitude) VALUES (?, ?, ?, ?)');
-                    $locStmt->execute([$catId, $city, $latitude, $longitude]);
-                } catch (Exception $lex) {
-                    // If location insert fails, delete cat and uploaded file to keep consistency
-                    try {
-                        $cat->delete();
-                    } catch (Exception $inner) {
-                        // ignore
-                    }
-                    if ($fileName !== '' && is_file(Configuration::UPLOAD_DIR . $fileName)) {
-                        @unlink(Configuration::UPLOAD_DIR . $fileName);
-                    }
-                    throw new HttpException(500, 'Failed to save location: ' . $lex->getMessage());
+            $latProvided = ($latitude !== null && $latitude !== '');
+            $lonProvided = ($longitude !== null && $longitude !== '');
+
+            // Validate lat/lon if provided
+            if ($latProvided || $lonProvided) {
+                if (!is_numeric($latitude) || !is_numeric($longitude)) {
+                    throw new HttpException(400, 'Latitude and longitude must be numeric');
+                }
+                $latitude = (float)$latitude;
+                $longitude = (float)$longitude;
+                if ($latitude < -90 || $latitude > 90 || $longitude < -180 || $longitude > 180) {
+                    throw new HttpException(400, 'Latitude/longitude out of range');
+                }
+
+                // check if location exists for this cat
+                $existing = \Framework\Core\Model::executeRawSQL('SELECT id FROM locations WHERE cat_id = ? LIMIT 1', [$catId]);
+                if (!empty($existing)) {
+                    // update existing location
+                    $locId = $existing[0]['id'];
+                    $upd = $conn->prepare('UPDATE locations SET city = ?, latitude = ?, longitude = ? WHERE id = ?');
+                    $upd->execute([$city, $latitude, $longitude, $locId]);
+                } else {
+                    $ins = $conn->prepare('INSERT INTO locations (cat_id, city, latitude, longitude) VALUES (?, ?, ?, ?)');
+                    $ins->execute([$catId, $city, $latitude, $longitude]);
                 }
             } else {
-                // Address required; this should not happen because frontend geocodes, but validate server-side
-                // Cleanup and error
-                try { $cat->delete(); } catch (Exception $inner) {}
-                if ($fileName !== '' && is_file(Configuration::UPLOAD_DIR . $fileName)) { @unlink(Configuration::UPLOAD_DIR . $fileName); }
-                throw new HttpException(400, 'Latitude and longitude required');
+                // If creating, require lat/lon. If editing, keep previous location (do nothing).
+                if ($id === 0) {
+                    throw new HttpException(400, 'Latitude and longitude required when creating a new cat');
+                }
+            }
+
+            // commit transaction
+            $conn->commit();
+            $inTransaction = false;
+
+            // After successful commit, remove old uploaded file if a new one was provided
+            if ($fileName !== '' && $oldFileName !== '' && is_file(Configuration::UPLOAD_DIR . $oldFileName)) {
+                @unlink(Configuration::UPLOAD_DIR . $oldFileName);
             }
 
             // Return success (200) so fetch() sees resp.ok
             return new EmptyResponse();
         } catch (Exception $e) {
-            // cleanup file if it was stored
+            // rollback if needed
+            try {
+                if ($inTransaction) {
+                    $conn->rollBack();
+                }
+            } catch (Exception $rb) {
+                // ignore rollback errors
+            }
+
+            // cleanup new uploaded file if present
             if ($fileName !== '' && is_file(Configuration::UPLOAD_DIR . $fileName)) {
                 @unlink(Configuration::UPLOAD_DIR . $fileName);
             }
+
+            // If it was a create and cat exists (but rollback may have undone insert), attempt to delete cat record
+            try {
+                if (isset($cat) && $id === 0 && method_exists($cat, 'getId') && $cat->getId()) {
+                    $cat->delete();
+                }
+            } catch (Exception $inner) {
+                // ignore
+            }
+
+            throw new HttpException(500, 'DB Chyba: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show edit form for a cat (GET)
+     */
+    public function edit(Request $request): Response
+    {
+        $id = (int)$request->value('id');
+        if ($id <= 0) {
+            throw new HttpException(400);
+        }
+        $cat = Cats::getOne($id);
+        if ($cat === null) {
+            throw new HttpException(404);
+        }
+
+        $identity = $this->app->getSession()->get(Configuration::IDENTITY_SESSION_KEY);
+        if (!$identity) {
+            throw new HttpException(403);
+        }
+        if ($cat->getUserId() !== null && $cat->getUserId() !== $identity->getId()) {
+            throw new HttpException(403, 'You are not allowed to edit this cat');
+        }
+
+        // load the cat's location if present
+        $locRows = [];
+        try {
+            $locRows = \Framework\Core\Model::executeRawSQL('SELECT city, latitude, longitude FROM locations WHERE cat_id = ? LIMIT 1', [$id]);
+        } catch (Exception $e) {
+            // ignore
+        }
+
+        return $this->html(['cat' => $cat, 'location' => $locRows[0] ?? null], 'edit');
+    }
+
+    /**
+     * Delete cat (owner only)
+     */
+    public function delete(Request $request): Response
+    {
+        $id = (int)$request->value('id');
+        if ($id <= 0) {
+            throw new HttpException(400);
+        }
+        $cat = Cats::getOne($id);
+        if ($cat === null) {
+            throw new HttpException(404);
+        }
+
+        $identity = $this->app->getSession()->get(Configuration::IDENTITY_SESSION_KEY);
+        if (!$identity) {
+            throw new HttpException(403);
+        }
+        if ($cat->getUserId() !== null && $cat->getUserId() !== $identity->getId()) {
+            throw new HttpException(403, 'You are not allowed to delete this cat');
+        }
+
+        try {
+            // remove uploaded file if exists
+            $fn = $cat->getFotka();
+            if ($fn && is_file(Configuration::UPLOAD_DIR . $fn)) {
+                @unlink(Configuration::UPLOAD_DIR . $fn);
+            }
+            $cat->delete();
+            return $this->redirect($this->url('catdatabase.index'));
+        } catch (Exception $e) {
             throw new HttpException(500, 'DB Chyba: ' . $e->getMessage());
         }
     }

@@ -28,6 +28,7 @@ use App\Configuration;
         <div class="row row-cols-3 g-4">
             <?php foreach ($cats as $cat):
                 // Support both model objects and associative arrays
+                $isOwner = false;
                 if (is_array($cat)) {
                     $id = htmlspecialchars($cat['id']);
                     $name = htmlspecialchars($cat['meno'] ?? '');
@@ -35,6 +36,7 @@ use App\Configuration;
                     $status = htmlspecialchars($cat['status'] ?? '');
                     $kastrovana = !empty($cat['kastrovana']);
                     $fotka = $cat['fotka'] ?? '';
+                    $ownerId = isset($cat['user_id']) ? (int)$cat['user_id'] : null;
                 } else {
                     // object (model) access
                     $id = htmlspecialchars($cat->getId());
@@ -43,6 +45,12 @@ use App\Configuration;
                     $status = htmlspecialchars($cat->getStatus() ?? '');
                     $kastrovana = method_exists($cat, 'isKastrovana') ? (bool)$cat->isKastrovana() : (!empty($cat->kastrovana));
                     $fotka = method_exists($cat, 'getFotka') ? $cat->getFotka() : (property_exists($cat, 'fotka') ? $cat->fotka : '');
+                    $ownerId = method_exists($cat, 'getUserId') ? $cat->getUserId() : (property_exists($cat, 'user_id') ? $cat->user_id : null);
+                }
+
+                // check ownership
+                if (isset($user) && $user?->isLoggedIn()) {
+                    $isOwner = ($ownerId !== null && $ownerId == $user->getId());
                 }
 
                 // determine image source
@@ -71,6 +79,17 @@ use App\Configuration;
                                 <div>Status: <?= $status ?></div>
                                 <div>Kastrovaná: <?= $kastrovana ? 'Áno' : 'Nie' ?></div>
                             </div>
+
+                            <?php if ($isOwner): ?>
+                                <div class="mt-3 d-flex gap-2 justify-content-end">
+                                    <a href="<?= $link->url('catdatabase.edit', ['id' => $id]) ?>" class="btn btn-primary btn-sm">Upraviť</a>
+                                    <form method="post" action="<?= $link->url('catdatabase.delete') ?>" onsubmit="return confirm('Are you sure you want to delete this cat?');" style="display:inline-block;">
+                                        <input type="hidden" name="id" value="<?= $id ?>">
+                                        <button type="submit" class="btn btn-danger btn-sm">Zmazať</button>
+                                    </form>
+                                </div>
+                            <?php endif; ?>
+
                         </div>
                     </div>
                 </div>
@@ -133,5 +152,3 @@ use App\Configuration;
 <!-- Leaflet assets for the mini map -->
 <link rel="stylesheet" href="<?= $link->asset('css/leaflet.css') ?>" />
 <script src="<?= $link->asset('js/leaflet.js') ?>"></script>
-
-

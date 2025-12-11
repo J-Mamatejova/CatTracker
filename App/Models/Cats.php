@@ -14,6 +14,8 @@ class Cats extends Model
     protected ?string $status = null;     // status
     protected ?int $kastrovana = 0;       // tinyint(1) 0/1
     protected ?string $fotka = null;      // photo path
+    // owner (optional) - may not exist in older DBs; controller will add column if needed
+    protected ?int $user_id = null;
 
     // Getters and setters
     public function getId(): ?int
@@ -76,6 +78,16 @@ class Cats extends Model
         $this->fotka = $fotka;
     }
 
+    public function getUserId(): ?int
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(?int $id): void
+    {
+        $this->user_id = $id;
+    }
+
     // Optional: convenience to get an array ready for view (if needed)
     public function toArray(): array
     {
@@ -86,6 +98,7 @@ class Cats extends Model
             'status' => $this->status,
             'kastrovana' => $this->kastrovana,
             'fotka' => $this->fotka,
+            'user_id' => $this->user_id,
         ];
     }
 }
