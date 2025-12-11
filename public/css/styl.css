@@ -35,8 +35,155 @@
     display: inline-block;
 }
 
+/* -----------------------------
+   Added responsive & typography tweaks
+   ----------------------------- */
+
+/* Base typography improvements */
+body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, "Noto Sans", sans-serif;
+    font-size: 16px;
+    color: #222;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.web-content p {
+    margin-bottom: 1rem;
+}
+
+/* Make buttons a bit bigger and more touch friendly by default */
+.btn {
+    padding: 0.5rem 0.9rem;
+    font-size: 1rem;
+}
+
+/* Navbar buttons should look like buttons but remain compact on desktop */
+.navbar-custom .nav-link.btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.95rem;
+}
+
+/* Cards: smoother appearance and spacing */
+.card {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Card image default height (desktop/tablet) and cover behavior */
+.card-img-top {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+/* Make the overall container breathe more on mobile */
+.container-fluid {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+/* Utility: increase spacing between button and small helper texts */
+#loginRequiredMsg {
+    line-height: 1.6;
+}
+
+/* Responsive adjustments for small screens (phones) */
 @media (max-width: 640px) {
     .site-name { display: none; }
     .navbar-brand img { width: 40px; }
-    .web-content { padding-top: 92px; }
+
+    /* Give web-content extra top space for taller navs */
+    .web-content { padding-top: 96px; }
+
+    /* Slightly increase base font-size on small devices for readability */
+    body { font-size: 17px; }
+
+    /* Make buttons larger/tappable on phones */
+    .btn {
+        padding: 0.75rem 1rem;
+        font-size: 1.05rem;
+    }
+
+    .navbar-custom .nav-link.btn {
+        padding: 0.6rem 0.9rem;
+        font-size: 1rem;
+    }
+
+    /* Reduce card image height on small screens while keeping them prominent */
+    .card-img-top {
+        height: 220px;
+    }
+
+    /* Stack the card columns vertically for better readability on phones */
+    .row.row-cols-3 > .col {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* Add larger gaps between rows */
+    .row.g-4 {
+        row-gap: 1.25rem;
+        column-gap: 0.75rem;
+    }
+
+    /* Slightly bigger headings */
+    h1, h2, h3 {
+        line-height: 1.15;
+    }
+
+    /* Make modal inputs easier to tap */
+    .modal .form-control,
+    .modal .form-check-input {
+        padding: 0.5rem 0.6rem;
+        font-size: 1rem;
+    }
+
+    /* --- New: make floated images stack nicely on small screens --- */
+    .img-fluid.float-start,
+    .img-fluid.float-end {
+        float: none !important;
+        display: block;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-bottom: 1rem !important;
+        max-width: 90% !important;
+        width: auto !important;
+        padding: 8px !important;
+        background: #fff !important;
+        border-radius: 8px !important;
+        border: 1px solid #eee !important;
+    }
+
+    /* Add more breathing room for the Home page hero text */
+    .web-content .py-4 {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+
+    .web-content p.text-start, .web-content ul.text-start {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+        font-size: 1rem;
+    }
 }
+
+/* Small tweak for tablets: make 3-column grid collapse to 2 columns */
+@media (min-width: 641px) and (max-width: 991px) {
+    .row.row-cols-3 > .col {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .card-img-top {
+        height: 260px;
+    }
+}
+
+/* End of additions */

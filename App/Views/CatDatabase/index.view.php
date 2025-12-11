@@ -11,7 +11,7 @@ use App\Configuration;
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h2 class="mb-0">Cat Database</h2>
         <div>
-            <button id="addNewCatBtn" class="btn btn-success">Add new cat</button>
+            <button id="addNewCatBtn" data-logged="<?= ($user?->isLoggedIn() ? '1' : '0') ?>" class="btn btn-success">Add new cat</button>
             <small id="loginRequiredMsg" class="text-danger ms-3" style="display:none;">you must log in to add cats</small>
         </div>
     </div>
@@ -79,7 +79,7 @@ use App\Configuration;
     <?php } ?>
 </div>
 
-<!-- Add Cat Modal -->
+<!-- Add Cat Modal (markup only) -->
 <div class="modal fade" id="addCatModal" tabindex="-1" aria-labelledby="addCatModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -134,105 +134,4 @@ use App\Configuration;
 <link rel="stylesheet" href="<?= $link->asset('css/leaflet.css') ?>" />
 <script src="<?= $link->asset('js/leaflet.js') ?>"></script>
 
-<script>
-    (function(){
-        const addBtn = document.getElementById('addNewCatBtn');
-        const loginMsg = document.getElementById('loginRequiredMsg');
-        const addCatModalEl = document.getElementById('addCatModal');
-        const addCatForm = document.getElementById('addCatForm');
-        const addCatAlert = document.getElementById('addCatAlert');
-        // Bootstrap modal
-        const addCatModal = new bootstrap.Modal(addCatModalEl);
 
-        // whether user is logged in (injected by server)
-        const isLogged = <?= ($user?->isLoggedIn() ? 'true' : 'false') ?>;
-
-        addBtn.addEventListener('click', function(){
-            if (!isLogged) {
-                // show red message briefly
-                loginMsg.style.display = 'inline';
-                setTimeout(() => { loginMsg.style.display = 'none'; }, 3000);
-                return;
-            }
-            // open modal
-            addCatAlert.innerHTML = '';
-            addCatModal.show();
-        });
-
-        // Mini-map selection
-        let miniMap = null;
-        let miniMarker = null;
-
-        addCatModalEl.addEventListener('shown.bs.modal', function () {
-            // initialize map once
-            if (miniMap === null) {
-                try {
-                    miniMap = L.map('addCatMiniMap').setView([48.666667, 19.5], 7);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        maxZoom: 19,
-                        attribution: '&copy; OpenStreetMap contributors'
-                    }).addTo(miniMap);
-
-                    miniMap.on('click', function(e) {
-                        const lat = e.latlng.lat.toFixed(6);
-                        const lon = e.latlng.lng.toFixed(6);
-                        // place or move marker
-                        if (miniMarker) {
-                            miniMarker.setLatLng(e.latlng);
-                        } else {
-                            miniMarker = L.marker(e.latlng).addTo(miniMap);
-                        }
-                        // populate hidden inputs
-                        document.getElementById('cat-latitude').value = lat;
-                        document.getElementById('cat-longitude').value = lon;
-                        // do not set city (no geocoding requested)
-                    });
-                } catch (err) {
-                    console.error('Failed to initialize mini map', err);
-                }
-            } else {
-                // resize if reopened
-                setTimeout(() => { miniMap.invalidateSize(); }, 200);
-            }
-        });
-
-        addCatForm.addEventListener('submit', async function (ev) {
-            ev.preventDefault();
-            addCatAlert.innerHTML = '';
-
-            // client-side validation
-            const name = document.getElementById('cat-name').value.trim();
-            const text = document.getElementById('cat-text').value.trim();
-            const lat = document.getElementById('cat-latitude').value.trim();
-            const lon = document.getElementById('cat-longitude').value.trim();
-            if (!name || !text) {
-                addCatAlert.innerHTML = '<div class="alert alert-danger">Name and text are required.</div>';
-                return;
-            }
-            if (!lat || !lon) {
-                addCatAlert.innerHTML = '<div class="alert alert-danger">Please select a location on the mini map.</div>';
-                return;
-            }
-
-            const formData = new FormData(addCatForm);
-
-            try {
-                const resp = await fetch('?c=catdatabase&a=save', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (resp.ok) {
-                    // success - close modal and reload page to show new cat
-                    addCatModal.hide();
-                    location.reload();
-                } else {
-                    const txt = await resp.text();
-                    addCatAlert.innerHTML = '<div class="alert alert-danger">Save failed: ' + (txt || resp.statusText) + '</div>';
-                }
-            } catch (err) {
-                addCatAlert.innerHTML = '<div class="alert alert-danger">Save failed: ' + err.message + '</div>';
-            }
-        });
-    })();
-</script>

@@ -21,41 +21,4 @@
     <?php } ?>
 </div>
 
-<script>
-    (function(){
-        // Parse URL params
-        function getParam(name) {
-            const params = new URLSearchParams(window.location.search);
-            return params.get(name);
-        }
-
-        const loginError = getParam('loginError');
-        const loginMessage = getParam('loginMessage');
-        const signupError = getParam('signupError');
-        const signupMessage = getParam('signupMessage');
-
-        // Helper to inject alert into dedicated alert container and show modal
-        function showModalWithMessage(modalId, alertContainerId, message, isError = true) {
-            const modalEl = document.getElementById(modalId);
-            if (!modalEl) return;
-            const alertContainer = document.getElementById(alertContainerId);
-            if (alertContainer) {
-                alertContainer.innerHTML = '';
-                const wrapper = document.createElement('div');
-                wrapper.className = isError ? 'alert alert-danger' : 'alert alert-success';
-                wrapper.textContent = message;
-                alertContainer.appendChild(wrapper);
-            }
-            // Use Bootstrap's modal show API
-            const modal = new bootstrap.Modal(modalEl);
-            modal.show();
-        }
-
-        if (loginError && loginMessage) {
-            showModalWithMessage('loginModal', 'loginModalAlert', loginMessage);
-        }
-        if (signupError && signupMessage) {
-            showModalWithMessage('signupModal', 'signupModalAlert', signupMessage);
-        }
-    })();
-</script>
+<!-- Inline scripts for profile modals moved to public/js/script.js -->

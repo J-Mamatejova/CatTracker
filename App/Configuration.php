@@ -28,8 +28,7 @@ class Configuration
      */
     public const DB_HOST = 'db';  // Hostname for the database service (defined in docker/docker-compose.yml)
     // NOTE: The docker init SQL creates a database named `cats` (docker/sql/01-init-cats.sql)
-    // so set DB_NAME to 'cats' to use the `macky` table created by that script.
-    public const DB_NAME = 'vaiicko_db'; // Database name (was 'vaiicko_db', adjusted to match init SQL)
+    public const DB_NAME = 'vaiicko_db';
     public const DB_USER = 'vaiicko_user'; // Username for database access (defined in docker/.env)
     public const DB_PASS = 'dtb456'; // Password for database access (defined in docker/.env)
 
