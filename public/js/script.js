@@ -123,8 +123,7 @@
         addCatForm.addEventListener('submit', async function (ev) {
             ev.preventDefault();
             if (addCatAlert) addCatAlert.innerHTML = '';
-            //TODO : validate inputs - no digits in name, text length, lat/lon range, image type/size
-            // add length of name and text checks
+
 
             const name = document.getElementById('cat-name')?.value.trim() || '';
             const text = document.getElementById('cat-text')?.value.trim() || '';
@@ -241,7 +240,7 @@
         var div = document.createElement('div');
         div.className = 'card mb-3 post-item';
         div.setAttribute('data-id', post.id);
-        var body = '' +
+        div.innerHTML = '' +
             '<div class="card-body">' +
             '<h5 class="card-title">' + escapeHtml(post.title) + '</h5>' +
             '<h6 class="card-subtitle mb-2 text-muted">by ' + escapeHtml(post.author || 'user') +
@@ -253,7 +252,6 @@
             '<a href="?c=post&a=edit&id=' + post.id + '" class="btn btn-sm btn-secondary">Edit</a> ' +
             '<button class="btn btn-sm btn-danger btn-delete-post" data-id="' + post.id + '">Delete</button>' +
             '</div></div>';
-        div.innerHTML = body;
         return div;
     }
 

@@ -34,7 +34,7 @@
                     </select>
                 </div>
                 <div>
-                    <button type="submit" class="btn btn-primary">Create (AJAX)</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
                 </div>
             </form>
         </div>

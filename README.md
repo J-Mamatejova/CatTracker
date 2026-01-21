@@ -28,3 +28,103 @@ All necessary services are set in `docker-compose.yml` file. After starting them
 - PHP contains the __PDO__ extension.
 - The database server is available locally on the port __3306__. The default login details can be found in `.env` file.
 - Adminer is available at [http://localhost:8080/](http://localhost:8080/)
+
+# CatTracker
+
+CatTracker je webová aplikácia vytvorená v rámci semestrálnej práce z predmetu **Vývoj aplikácií pre internet a intranet (VAII)**.  
+Aplikácia slúži na evidenciu a zdieľanie informácií o túlavých mačkách v komunitách – ich výskyte, stave a súvisiacich príspevkoch používateľov.
+
+---
+
+## Motivácia
+
+Aplikácia vznikla ako reakcia na reálny problém – vo viacerých oblastiach sa nachádza veľké množstvo túlavých mačiek a ľudia často zdieľajú informácie o ich výskyte, zraneniach alebo správaní neprehľadným spôsobom (napr. v rôznych skupinách).  
+Cieľom aplikácie je tieto informácie centralizovať a sprístupniť ich prehľadnou formou.
+
+---
+
+## Funkcionalita aplikácie
+
+Aplikácia obsahuje nasledujúce časti:
+
+### 🏠 Home page
+- úvodná stránka aplikácie
+- odkazy na databázu mačiek, mapu a feed príspevkov
+
+### 🐱 Databáza mačiek
+- zobrazenie zoznamu mačiek s fotografiou, menom a popisom
+- detail mačky v samostatnom zobrazení
+- CRUD operácie nad entitou **mačky** (Create, Read, Update, Delete)
+
+### 🗺️ Mapa
+- zobrazenie mapy s lokalitami výskytu mačiek
+- údaje sú načítavané z databázy (entita `locations`)
+
+### 📰 Feed / Príspevky
+- feed príspevkov podobný sociálnej sieti
+- každý príspevok je viazaný na konkrétnu mačku
+- CRUD operácie nad entitou **posts**
+- vytváranie a mazanie príspevkov prebieha asynchrónne pomocou **AJAX**
+
+### 👤 Používateľ
+- aplikácia obsahuje používateľov (entita `users`)
+- príspevky sú viazané na konkrétneho používateľa
+
+---
+
+## Technológie
+
+- **PHP** – serverová logika
+- **MySQL** – databáza
+- **Docker & Docker Compose** – spúšťanie aplikácie a databázy
+- **HTML, CSS** – používateľské rozhranie
+- **JavaScript (AJAX)** – asynchrónna komunikácia (vytváranie a mazanie príspevkov)
+- **MVC architektúra** – oddelenie aplikačnej logiky a prezentačnej vrstvy
+- **Framework Vaiíčko** – poskytnutý univerzitou
+- **Git & GitHub** – verzovanie projektu
+
+---
+
+## Databázový model
+
+Aplikácia pracuje s nasledujúcimi hlavnými entitami:
+
+- **macky** – informácie o mačkách
+- **locations** – lokality výskytu mačiek (viazané na mačky)
+- **posts** – príspevky používateľov (viazané na mačky a používateľov)
+- **users** – používatelia aplikácie
+
+Vzťahy:
+- mačka → lokácie (1:N)
+- mačka → príspevky (1:N)
+- používateľ → príspevky (1:N)
+
+---
+
+## AJAX
+
+AJAX je v aplikácii použitý minimálne v dvoch prípadoch:
+- vytváranie nového príspevku bez znovunačítania stránky
+- mazanie príspevku bez znovunačítania stránky
+
+---
+
+## Spustenie aplikácie
+
+### Požiadavky
+- Docker
+- Docker Compose
+
+### Postup
+
+1. Naklonuj repozitár:
+   ```bash
+   git clone https://github.com/J-Mamatejova/CatTracker.git
+2. Prejdi do adresára s projektom:
+   ```bash
+   cd CatTracker/docker
+3. Spusti aplikáciu pomocou Docker Compose:
+   ```bash
+   docker-compose up -d
+4. Aplikácia bude dostupná na: 
+http://localhost/S
