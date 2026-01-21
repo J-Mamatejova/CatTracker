@@ -11,8 +11,8 @@ use App\Configuration;
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h2 class="mb-0">Cat Database</h2>
         <div>
-            <button id="addNewCatBtn" data-logged="<?= ($user?->isLoggedIn() ? '1' : '0') ?>" class="btn btn-success">Add new cat</button>
-            <small id="loginRequiredMsg" class="text-danger ms-3" style="display:none;">you must log in to add cats</small>
+            <button id="addNewCatBtn" data-logged="<?= ($user?->isLoggedIn() ? '1' : '0') ?>" class="btn btn-success" data-i18n="catdb.add">Add new cat</button>
+            <small id="loginRequiredMsg" class="text-danger ms-3" style="display:none;" data-i18n="catdb.login_required">you must log in to add cats</small>
         </div>
     </div>
 
@@ -82,10 +82,10 @@ use App\Configuration;
 
                             <?php if ($isOwner): ?>
                                 <div class="mt-3 d-flex gap-2 justify-content-end">
-                                    <a href="<?= $link->url('catdatabase.edit', ['id' => $id]) ?>" class="btn btn-primary btn-sm">Upraviť</a>
-                                    <form method="post" action="<?= $link->url('catdatabase.delete') ?>" onsubmit="return confirm('Are you sure you want to delete this cat?');" style="display:inline-block;">
+                                    <a href="<?= $link->url('catdatabase.edit', ['id' => $id]) ?>" class="btn btn-primary btn-sm" data-i18n="catdb.edit">Upraviť</a>
+                                    <form method="post" action="<?= $link->url('catdatabase.delete') ?>" class="confirm-delete-form" data-confirm-key="confirm.delete.cat" style="display:inline-block;">
                                         <input type="hidden" name="id" value="<?= $id ?>">
-                                        <button type="submit" class="btn btn-danger btn-sm">Zmazať</button>
+                                        <button type="submit" class="btn btn-danger btn-sm" data-i18n="catdb.delete">Zmazať</button>
                                     </form>
                                 </div>
                             <?php endif; ?>

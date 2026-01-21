@@ -184,4 +184,211 @@ body {
     }
 }
 
-/* End of additions */
+/* === Home page hero improvements === */
+.web-content .py-4 {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,250,0.9));
+    padding: 2.25rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(20,20,20,0.06);
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+.web-content h2 {
+    font-size: 1.9rem;
+    margin-bottom: 1rem;
+    color: #1f2937; /* deep gray */
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.web-content p.text-start, .web-content ul.text-start {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    color: #333;
+    font-size: 1.02rem;
+}
+
+/* Make images visually grouped with text: subtle frame and shadow already inline, add consistent sizing */
+.web-content img.img-fluid {
+    box-shadow: 0 8px 24px rgba(32,40,60,0.06);
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+.web-content img.img-fluid:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 40px rgba(32,40,60,0.10);
+}
+
+/* CTA button group styles */
+.hero-cta .btn-cta {
+    padding: 0.75rem 1.15rem;
+    border-radius: 999px;
+    font-weight: 600;
+    box-shadow: 0 6px 18px rgba(32,40,60,0.06);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+.hero-cta .btn-cta:active { transform: translateY(1px); }
+.hero-cta .btn-primary { background: #0d6efd; border-color: #0d6efd; color: #fff; }
+.hero-cta .btn-secondary { background: #6c757d; border-color: #6c757d; color: #fff; }
+.hero-cta .btn-cta:hover { opacity: 0.95; transform: translateY(-2px); }
+
+/* Make hero images sit to the sides on wide screens, and stack on mobile (already handled) */
+@media (min-width: 992px) {
+    .web-content .py-4 { padding: 3rem 3rem; }
+    .web-content img.img-fluid.float-start { max-width: 360px; }
+    .web-content img.img-fluid.float-end { max-width: 360px; }
+    .web-content p.text-start { font-size: 1.08rem; }
+}
+
+@media (max-width: 480px) {
+    .web-content .py-4 { padding: 1.25rem 1rem; }
+    .web-content h2 { font-size: 1.5rem; }
+    .hero-cta .btn-cta { display: block; width: 100%; margin-bottom: 0.6rem; }
+    .hero-cta .btn-cta.me-2 { margin-right: 0; }
+}
+
+/* Small helper: ensure the Authors section stays visually distinct */
+.row.mt-3 .col.text-center h4 { margin-bottom: 0.5rem; color: #111; }
+
+/* Adjust paragraph placed below floated images */
+.below-images {
+    clear: both;
+    display: block;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Authors section: match navbar background color and improved contrast */
+.authors-section {
+    background: navajowhite;
+    padding: 0.75rem 0.5rem;
+    border-radius: 8px;
+    margin: 0 0.5rem;
+}
+.authors-section a {
+    color: #111; /* darker text for readability */
+    text-decoration: none;
+}
+.authors-section h4 {
+    margin-bottom: 0.25rem;
+}
+
+/* Ensure authors-section looks good on small screens */
+@media (max-width: 640px) {
+    .authors-section { margin: 0 0.25rem; padding: 0.85rem 0.5rem; }
+}
+
+/* Center paragraph between images on wide screens */
+.between-images {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 640px;
+}
+
+/* Navbar collapse behavior: hide inline nav buttons on small screens and rely on the collapse toggler */
+@media (max-width: 640px) {
+    .navbar-custom .nav-link.btn {
+        display: none; /* hide inline buttons when collapsed */
+    }
+    /* ensure bootstrap toggler is visible and styled appropriately */
+    .navbar-toggler {
+        border-color: rgba(0,0,0,0.12);
+    }
+    .navbar-toggler-icon {
+        background-image: none; /* remove default so we can draw a simple icon */
+        width: 28px;
+        height: 18px;
+        position: relative;
+        display: inline-block;
+    }
+    .navbar-toggler-icon::before,
+    .navbar-toggler-icon::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #111;
+        border-radius: 2px;
+    }
+    .navbar-toggler-icon::before { top: 0; box-shadow: 0 8px 0 #111; }
+    .navbar-toggler-icon::after { bottom: 0; }
+
+    /* When the collapse is open, show nav links vertically */
+    .navbar-collapse.show .nav-link.btn {
+        display: flex; /* show inside collapsed menu */
+        width: 100%;
+        margin: 0.35rem 0;
+    }
+}
+
+/* === Profile page styles === */
+.profile-card {
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(15,20,30,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.profile-card .card-body {
+    padding: 1.25rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.45rem 0.25rem;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.02);
+}
+
+.stat-label {
+    color: #555;
+    font-size: 0.95rem;
+}
+.stat-value {
+    font-size: 1.05rem;
+}
+
+/* Improve headings inside profile */
+.profile-card .card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #111;
+}
+
+/* Layout tweaks for larger screens */
+@media (min-width: 768px) {
+    .profile-card { min-height: 100%; }
+}
+
+/* Mobile: stack into single column and increase spacing */
+@media (max-width: 767px) {
+    .stat-item { flex-direction: row; gap: 0.5rem; }
+    .profile-card .card-body { padding: 1rem; }
+}
+
+/* Small utility to emphasize success message */
+.profile-success {
+    color: #0f5132;
+    background: rgba(15,81,50,0.06);
+    padding: 0.45rem 0.6rem;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+/* Make form inputs and buttons spacing clearer on profile actions */
+.profile-card form .form-control { margin-bottom: 0.5rem; }
+.profile-card .btn { min-width: 130px; }
+
+/* Ensure good responsive behavior on very small screens */
+@media (max-width: 420px) {
+    .profile-card .btn { width: 100%; margin-bottom: 0.5rem; }
+    .profile-card .d-flex.align-items-center { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+}
+
+/* End profile styles */

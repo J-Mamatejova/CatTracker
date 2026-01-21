@@ -31,7 +31,19 @@
             <span class="site-name ms-2"><?= App\Configuration::APP_NAME ?></span>
         </a>
 
-        <!-- Right-side controls: Cat Database, Map View, and auth actions -->
+        <!-- Language switcher (SK / EN) placed to the right of brand -->
+        <div class="lang-switch d-flex align-items-center ms-3">
+            <button type="button" class="btn btn-sm btn-outline-dark lang-btn me-1" data-lang="sk" aria-label="Slovensky">SK</button>
+            <button type="button" class="btn btn-sm btn-outline-dark lang-btn" data-lang="en" aria-label="English">EN</button>
+        </div>
+
+        <!-- Toggler for small screens -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Right-side controls wrapped in Bootstrap collapse -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto align-items-center">
             <li class="nav-item me-2">
                 <a class="nav-link btn btn-outline-dark d-flex align-items-center" href="<?= $link->url('catdatabase.index') ?>">
@@ -39,7 +51,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M2.165 4.5c-.5.2-.99.7-1.01 1.3C1.08 8.7 3.6 11 8 11s6.92-2.3 6.845-5.2c-.02-.6-.51-1.1-1.01-1.3-.08-.03-.16.04-.19.12C12.9 6 11.8 6.5 10 6.5s-2.9-.5-3.8-1.08c-.11-.07-.26-.07-.37 0C5.1 6 4 6.5 2.205 5.62c-.03-.08-.11-.15-.04-.12z"/>
                     </svg>
-                    Cat Database
+                    <span data-i18n="nav.catdatabase">Cat Database</span>
                 </a>
             </li>
 
@@ -50,7 +62,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M14 4.5V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h7.5L14 4.5zm-1 0L10.5 1H3v13h10V4.5zM5 5h6v1H5V5zm0 2h6v1H5V7z"/>
                     </svg>
-                    Posts
+                    <span data-i18n="nav.posts">Posts</span>
                 </a>
             </li>
 
@@ -60,15 +72,16 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16" aria-hidden="true">
                         <path d="M8 0a5 5 0 0 0-5 5c0 4.667 5 11 5 11s5-6.333 5-11a5 5 0 0 0-5-5zm0 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
                     </svg>
-                    Map View
+                    <span data-i18n="nav.map">Map View</span>
                 </a>
             </li>
 
             <!-- Always show Profile button; profile UI controls login/register via modal -->
             <li class="nav-item">
-                <a class="nav-link btn btn-outline-dark" href="<?= $link->url('profile.index') ?>">Profile</a>
+                <a class="nav-link btn btn-outline-dark" href="<?= $link->url('profile.index') ?>"><span data-i18n="nav.profile">Profile</span></a>
             </li>
         </ul>
+        </div>
     </div>
 </nav>
 <div class="container-fluid mt-3">
@@ -90,17 +103,17 @@
                 <div class="modal-body">
                     <div id="loginModalAlert"></div>
                     <div class="mb-3">
-                        <label for="modal-email" class="form-label">Email</label>
+                        <label for="modal-email" class="form-label" data-i18n="login.email">Email</label>
                         <input type="email" class="form-control" id="modal-email" name="email" required>
                     </div>
                     <div class="mb-3">
-                        <label for="modal-password" class="form-label">Password</label>
+                        <label for="modal-password" class="form-label" data-i18n="login.password">Password</label>
                         <input type="password" class="form-control" id="modal-password" name="password" required>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" name="submit" class="btn btn-primary">Log in</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" name="submit" class="btn btn-primary" data-i18n="login.submit">Log in</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.close">Close</button>
                 </div>
             </form>
         </div>
@@ -119,25 +132,25 @@
                 <div class="modal-body">
                     <div id="signupModalAlert"></div>
                     <div class="mb-3">
-                        <label for="signup-username" class="form-label">Username</label>
+                        <label for="signup-username" class="form-label" data-i18n="signup.username">Username</label>
                         <input type="text" class="form-control" id="signup-username" name="username" required>
                     </div>
                     <div class="mb-3">
-                        <label for="signup-email" class="form-label">Email</label>
+                        <label for="signup-email" class="form-label" data-i18n="signup.email">Email</label>
                         <input type="email" class="form-control" id="signup-email" name="email" required>
                     </div>
                     <div class="mb-3">
-                        <label for="signup-password" class="form-label">Password</label>
+                        <label for="signup-password" class="form-label" data-i18n="signup.password">Password</label>
                         <input type="password" class="form-control" id="signup-password" name="password" required>
                     </div>
                     <div class="mb-3">
-                        <label for="signup-password-confirm" class="form-label">Confirm password</label>
+                        <label for="signup-password-confirm" class="form-label" data-i18n="signup.password_confirm">Confirm password</label>
                         <input type="password" class="form-control" id="signup-password-confirm" name="password_confirm" required>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" name="submit" class="btn btn-primary">Sign up</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" name="submit" class="btn btn-primary" data-i18n="signup.submit">Sign up</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.close">Close</button>
                 </div>
             </form>
         </div>

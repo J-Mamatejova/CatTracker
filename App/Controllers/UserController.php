@@ -103,6 +103,12 @@ class UserController extends BaseController
                 $pwCol = 'password_hash';
             }
 
+            // Whitelist the password column name to avoid SQL injection via column name
+            $allowedPwCols = ['password_hash', 'password'];
+            if (!in_array($pwCol, $allowedPwCols, true)) {
+                $pwCol = 'password_hash';
+            }
+
             // check existing
             $existingRows = FrameworkModel::executeRawSQL('SELECT id FROM users WHERE email = ? OR username = ? LIMIT 1', [$email, $username]);
             $existing = $existingRows[0] ?? null;
@@ -188,6 +194,12 @@ class UserController extends BaseController
                 $pwCol = 'password';
             } else {
                 $conn->prepare("ALTER TABLE users ADD COLUMN `password_hash` VARCHAR(255) NULL")->execute();
+                $pwCol = 'password_hash';
+            }
+
+            // Whitelist the password column name to avoid SQL injection via column name
+            $allowedPwCols = ['password_hash', 'password'];
+            if (!in_array($pwCol, $allowedPwCols, true)) {
                 $pwCol = 'password_hash';
             }
 
