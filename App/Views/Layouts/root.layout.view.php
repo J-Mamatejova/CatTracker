@@ -42,6 +42,18 @@
                     Cat Database
                 </a>
             </li>
+
+            <!-- NEW: Posts / Feed button -->
+            <li class="nav-item me-2">
+                <a class="nav-link btn btn-outline-dark d-flex align-items-center" href="<?= $link->url('post.index') ?>">
+                    <!-- simple post icon (paper) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M14 4.5V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h7.5L14 4.5zm-1 0L10.5 1H3v13h10V4.5zM5 5h6v1H5V5zm0 2h6v1H5V7z"/>
+                    </svg>
+                    Posts
+                </a>
+            </li>
+
             <li class="nav-item me-2">
                 <a class="nav-link btn btn-outline-dark d-flex align-items-center" href="<?= $link->url('map.index') ?>">
                     <!-- simple map marker icon -->

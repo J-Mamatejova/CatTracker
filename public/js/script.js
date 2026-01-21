@@ -123,6 +123,8 @@
         addCatForm.addEventListener('submit', async function (ev) {
             ev.preventDefault();
             if (addCatAlert) addCatAlert.innerHTML = '';
+            //TODO : validate inputs - no digits in name, text length, lat/lon range, image type/size
+            // add length of name and text checks
 
             const name = document.getElementById('cat-name')?.value.trim() || '';
             const text = document.getElementById('cat-text')?.value.trim() || '';
@@ -217,11 +219,117 @@
         initMapWhenReady();
     }
 
+    /* Posts page: AJAX create + delete handlers */
+    function escapeHtml(s) {
+        if (!s) return '';
+        return s.replace(/[&<>"]|'/g, function (c) {
+            return ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[c];
+        });
+    }
+
+    function nl2br(str) {
+        return (str || '').replace(/\n/g, '<br>');
+    }
+
+    function renderPostHtml(post) {
+        var div = document.createElement('div');
+        div.className = 'card mb-3 post-item';
+        div.setAttribute('data-id', post.id);
+        var body = '' +
+            '<div class="card-body">' +
+            '<h5 class="card-title">' + escapeHtml(post.title) + '</h5>' +
+            '<h6 class="card-subtitle mb-2 text-muted">by ' + escapeHtml(post.author || 'user') +
+            (post.cat_name ? ' — cat: ' + escapeHtml(post.cat_name) : '') +
+            '<small class="text-muted float-end">' + escapeHtml(post.created_at || '') + '</small>' +
+            '</h6>' +
+            '<p class="card-text">' + nl2br(escapeHtml(post.content)) + '</p>' +
+            '<div>' +
+            '<a href="?c=post&a=edit&id=' + post.id + '" class="btn btn-sm btn-secondary">Edit</a> ' +
+            '<button class="btn btn-sm btn-danger btn-delete-post" data-id="' + post.id + '">Delete</button>' +
+            '</div></div>';
+        div.innerHTML = body;
+        return div;
+    }
+
+    function initPostsPage() {
+        var createForm = document.getElementById('createPostForm');
+        var createAlert = document.getElementById('createPostAlert');
+        var feed = document.getElementById('postsFeed');
+
+        if (createForm) {
+            createForm.addEventListener('submit', function(ev){
+                ev.preventDefault();
+                if (createAlert) createAlert.innerHTML = '';
+                var fd = new FormData(createForm);
+                fetch('?c=post&a=save', {
+                    method: 'POST',
+                    body: fd,
+                    credentials: 'same-origin'
+                }).then(function(resp){
+                    return resp.json().catch(function(){ return { error: 'Invalid response' }; });
+                }).then(function(json){
+                    if (json && json.success && json.post) {
+                        var node = renderPostHtml(json.post);
+                        if (feed) feed.insertBefore(node, feed.firstChild);
+                        createForm.reset();
+                    } else {
+                        var msg = (json && json.error) ? json.error : 'Save failed';
+                        if (createAlert) createAlert.innerHTML = '<div class="alert alert-danger">' + escapeHtml(msg) + '</div>';
+                    }
+                }).catch(function(err){
+                    if (createAlert) createAlert.innerHTML = '<div class="alert alert-danger">Save failed: ' + escapeHtml(err.message) + '</div>';
+                    console.error('Create post error', err);
+                });
+            });
+        }
+
+        if (feed) {
+            feed.addEventListener('click', function(ev){
+                var t = ev.target;
+                if (t && t.classList && t.classList.contains('btn-delete-post')) {
+                    var id = t.getAttribute('data-id');
+                    if (!id) return;
+                    if (!confirm('Are you sure you want to delete this post?')) return;
+
+                    var btn = t; btn.disabled = true;
+                    var params = new URLSearchParams(); params.append('id', id);
+
+                    fetch('?c=post&a=delete', {
+                        method: 'POST',
+                        body: params,
+                        credentials: 'same-origin'
+                    }).then(function(resp){
+                        return resp.json().catch(function(){ return { error: 'Invalid response' }; });
+                    }).then(function(json){
+                        if (json && json.success) {
+                            var item = feed.querySelector('.post-item[data-id="' + id + '"]');
+                            if (item && item.parentNode) item.parentNode.removeChild(item);
+                        } else {
+                            alert('Delete failed: ' + (json && json.error ? json.error : 'Unknown'));
+                            btn.disabled = false;
+                        }
+                    }).catch(function(err){
+                        alert('Delete failed: ' + err.message);
+                        console.error('Delete error', err);
+                        btn.disabled = false;
+                    });
+                }
+            });
+        }
+    }
+
     /* DOMContentLoaded: initialize parts depending on presence */
     document.addEventListener('DOMContentLoaded', function(){
         try { initProfileModalsFromURL(); } catch(e) { console.error(e); }
         try { initCatDatabaseAddModal(); } catch(e) { console.error(e); }
         try { initMapPage(); } catch(e) { console.error(e); }
+        try { initPostsPage(); } catch(e) { console.error(e); }
     });
 
 })();

@@ -21,4 +21,4 @@
     <?php } ?>
 </div>
 
-<!-- Inline scripts for profile modals moved to public/js/script.js -->
+

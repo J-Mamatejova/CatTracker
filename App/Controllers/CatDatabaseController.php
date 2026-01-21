@@ -9,7 +9,6 @@ use Framework\Core\BaseController;
 use Framework\Http\HttpException;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
-use Framework\Http\Responses\RedirectResponse;
 use Framework\Http\Responses\EmptyResponse;
 use Framework\DB\Connection;
 
