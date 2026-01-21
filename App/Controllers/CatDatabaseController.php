@@ -1,4 +1,8 @@
 <?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ *
+ */
 
 namespace App\Controllers;
 
@@ -13,33 +17,22 @@ use Framework\Http\Responses\EmptyResponse;
 use Framework\DB\Connection;
 
 /**
- * Class CatDatabaseController
- * Controller for the Cat Database page.
- *
- * @package App\Controllers
+ * Trieda CatDatabaseController
+ * Kontrolér pre stránku Databáza mačiek.
  */
 class CatDatabaseController extends BaseController
 {
     /**
-     * Authorization method
-     *
-     * @param Request $request
-     * @param string $action
-     * @return bool
-     * @throws Exception
+     * Autorizácia akcií
+     * Tu zatiaľ povolíme všetko; možné pridať per-action checks neskôr.
      */
     public function authorize(Request $request, string $action): bool
     {
-        // For now allow all actions; you can customize per-action checks later
         return true;
     }
 
     /**
-     * Shows the cat database index page.
-     *
-     * @param Request $request
-     * @return Response
-     * @throws HttpException
+     * Zobraziť index stránku databázy mačiek
      */
     public function index(Request $request): Response
     {
@@ -54,7 +47,7 @@ class CatDatabaseController extends BaseController
     }
 
     /**
-     * Save new cat (called by AJAX/form POST) - also handles updates when id is provided
+     * Uložiť novú mačku (volané cez AJAX/form POST) - tiež rieši aktualizácie
      */
     public function save(Request $request): Response
     {
@@ -250,7 +243,7 @@ class CatDatabaseController extends BaseController
     }
 
     /**
-     * Show edit form for a cat (GET)
+     * Zobraziť formulár pre úpravu mačky (GET)
      */
     public function edit(Request $request): Response
     {
@@ -283,7 +276,7 @@ class CatDatabaseController extends BaseController
     }
 
     /**
-     * Delete cat (owner only)
+     * Zmazať mačku (len vlastník)
      */
     public function delete(Request $request): Response
     {

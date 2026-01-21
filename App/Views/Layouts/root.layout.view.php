@@ -47,10 +47,7 @@
         <ul class="navbar-nav ms-auto align-items-center">
             <li class="nav-item me-2">
                 <a class="nav-link btn btn-outline-dark d-flex align-items-center" href="<?= $link->url('catdatabase.index') ?>">
-                    <!-- simple cat icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16" aria-hidden="true">
-                        <path d="M2.165 4.5c-.5.2-.99.7-1.01 1.3C1.08 8.7 3.6 11 8 11s6.92-2.3 6.845-5.2c-.02-.6-.51-1.1-1.01-1.3-.08-.03-.16.04-.19.12C12.9 6 11.8 6.5 10 6.5s-2.9-.5-3.8-1.08c-.11-.07-.26-.07-.37 0C5.1 6 4 6.5 2.205 5.62c-.03-.08-.11-.15-.04-.12z"/>
-                    </svg>
+                    <img src="<?= $link->asset('images/cat-icon.png') ?>" alt="Cat" width="20" height="20" class="me-2">
                     <span data-i18n="nav.catdatabase">Cat Database</span>
                 </a>
             </li>

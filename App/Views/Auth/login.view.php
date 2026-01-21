@@ -1,10 +1,13 @@
 <?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ */
 
 /** @var string|null $message */
 /** @var \Framework\Support\LinkGenerator $link */
 /** @var \Framework\Support\View $view */
 
-$view->setLayout('auth');
+// Poznámka: nevoláme $view->setLayout() tu, aby sa neoznačoval HTML ako unreachable.
 ?>
 
 <div class="container">
@@ -12,7 +15,7 @@ $view->setLayout('auth');
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
             <div class="card card-signin my-5">
                 <div class="card-body">
-                    <h5 class="card-title text-center">Username</h5>
+                    <h5 class="card-title text-center" data-i18n="login.title">Prihlásiť sa</h5>
                     <div class="text-center text-danger mb-3">
                         <?= @$message ?>
                     </div>

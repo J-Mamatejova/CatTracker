@@ -1,9 +1,12 @@
 <?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ */
 
 /** @var \Framework\Support\LinkGenerator $link */
 /** @var \Framework\Support\View $view */
 
-$view->setLayout('auth');
+// Poznámka: nepoužívame $view->setLayout tu, aby sa HTML nezobrazilo ako unreachable statement
 ?>
 
 <div class="container-fluid">

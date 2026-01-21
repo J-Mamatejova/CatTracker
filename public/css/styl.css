@@ -391,4 +391,56 @@ body {
     .profile-card .d-flex.align-items-center { flex-direction: column; align-items: stretch; gap: 0.5rem; }
 }
 
-/* End profile styles */
+/* === Posts / Feed layout styles === */
+.posts-layout .create-card {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(10,20,30,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.posts-layout .create-card .card-body {
+    padding: 1.25rem;
+}
+
+.posts-layout .small-tip-card {
+    border-radius: 10px;
+    box-shadow: none;
+    border: 1px dashed rgba(0,0,0,0.04);
+}
+
+.feed-card {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(10,20,30,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.feed-card .card-body {
+    padding: 1.25rem;
+}
+
+.post-item .card-body {
+    padding: 1rem;
+}
+
+.empty-state {
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(250,250,250,0.6), rgba(245,245,245,0.6));
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+.empty-state h6 { font-weight: 600; }
+.empty-state p { margin-bottom: 1rem; }
+
+/* Modal: ensure larger form feels like card */
+.modal-content { border-radius: 12px; }
+
+@media (max-width: 767px) {
+    /* single column stacking */
+    .posts-layout .col-md-4, .posts-layout .col-md-8 { flex: 0 0 100%; max-width: 100%; }
+    .posts-layout .create-card { margin-bottom: 8px; }
+}
+
+/* Small tweaks for accessibility */
+.create-card .btn { font-weight: 600; }
+
+/* End posts styles */

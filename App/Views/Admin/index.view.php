@@ -1,4 +1,8 @@
-<<?php
+<?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ *
+ */
 
 /** @var \Framework\Support\LinkGenerator $link */
 /** @var \Framework\Auth\AppUser $user */
@@ -8,9 +12,14 @@
     <div class="row">
         <div class="col">
             <div>
-                Welcome, <strong><?= $user->getName() ?></strong>!<br><br>
-                This part of the application is accessible only after logging in.
+                Vitajte, <strong><?= $user->getName() ?></strong>!<br><br>
+                Táto časť aplikácie je prístupná iba po prihlásení.
             </div>
         </div>
     </div>
+</div>
+
+<div class="container mt-4">
+    <h3>Admin panel</h3>
+    <p>Admin nástroje idú sem.</p>
 </div>

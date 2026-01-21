@@ -1,4 +1,8 @@
 <?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ *
+ */
 
 namespace App\Controllers;
 
@@ -16,7 +20,7 @@ class PostController extends BaseController
 {
     public function authorize(Request $request, string $action): bool
     {
-        // Posts are public to view; create/update/delete require login which we'll check in methods
+        // Príspevky sú verejné na prehliadanie; vytváranie/úprava/mazanie vyžadujú prihlásenie (kontrolované v metódach)
         return true;
     }
 
@@ -36,7 +40,7 @@ class PostController extends BaseController
         }
     }
 
-    // AJAX create
+    // AJAX vytvorenie
     public function save(Request $request): Response
     {
         if (!$request->isPost()) {
@@ -45,7 +49,7 @@ class PostController extends BaseController
 
         $identity = $this->app->getSession()->get(Configuration::IDENTITY_SESSION_KEY);
         if (!$identity) {
-            // return JSON error for JS
+            // vrátiť JSON chybu pre JS
             return $this->json(['error' => 'Not logged in']);
         }
 
@@ -70,7 +74,7 @@ class PostController extends BaseController
         }
     }
 
-    // Edit form (normal GET)
+    // Edit formulár (GET)
     public function edit(Request $request): Response
     {
         $id = (int)$request->value('id');
@@ -90,7 +94,7 @@ class PostController extends BaseController
         }
     }
 
-    // Update (normal POST)
+    // Aktualizácia (POST)
     public function update(Request $request): Response
     {
         if (!$request->isPost()) {
@@ -114,7 +118,7 @@ class PostController extends BaseController
 
         try {
             $conn = Connection::getInstance();
-            // check ownership
+            // kontrola vlastníctva
             $owner = FrameworkModel::executeRawSQL('SELECT user_id FROM posts WHERE id = ? LIMIT 1', [$id]);
             if (empty($owner) || $owner[0]['user_id'] != $identity->getId()) {
                 throw new HttpException(403, 'Not allowed');
@@ -127,7 +131,7 @@ class PostController extends BaseController
         }
     }
 
-    // AJAX delete
+    // AJAX mazanie
     public function delete(Request $request): Response
     {
         if (!$request->isPost()) {
@@ -158,4 +162,3 @@ class PostController extends BaseController
         }
     }
 }
-

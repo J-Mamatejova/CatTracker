@@ -1,28 +1,29 @@
 <?php
-/** @var LinkGenerator $link */
-/** @var array|null $user */
-/** @var int $posts_count */
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ *
+ */
 
-use Framework\Support\LinkGenerator;
-
+/** @var \Framework\Support\LinkGenerator $link */
+/** @var \Framework\Auth\AppUser $user */
 ?>
+
 <div class="container mt-4">
-    <?php if (empty($user)): ?>
-        <h2>Not logged in</h2>
-        <p>
-            <a class="btn btn-primary" href="<?= $link->url('user.login') ?>">Login</a>
-            <a class="btn btn-secondary" href="<?= $link->url('user.register') ?>">Register</a>
-        </p>
-    <?php else: ?>
-        <h2>Profile</h2>
-        <table class="table">
-            <tr><th>Username</th><td><?= htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8') ?></td></tr>
-            <tr><th>Email</th><td><?= htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8') ?></td></tr>
-            <tr><th>Joined</th><td><?= htmlspecialchars($user['created_at'], ENT_QUOTES, 'UTF-8') ?></td></tr>
-            <tr><th>Posts</th><td><?= (int)$posts_count ?></td></tr>
-        </table>
-        <p>
-            <a class="btn btn-danger" href="<?= $link->url('user.logout') ?>">Logout</a>
-        </p>
-    <?php endif; ?>
+    <div class="row">
+        <div class="col">
+            <h3 data-i18n="profile.heading">Profil</h3>
+            <?php if (!isset($user) || !$user->isLoggedIn()): ?>
+                <p data-i18n="profile.please_login">Prosím, prihláste sa alebo si vytvorte účet.</p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal" data-i18n="login.open">Prihlásiť sa</button>
+                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#signupModal" data-i18n="signup.open">Registrovať sa</button>
+            <?php else: ?>
+                <p data-i18n="profile.welcome">Vitaj,</p>
+                <div class="card">
+                    <div class="card-body">
+                        <p><strong><?= htmlspecialchars($user->getName()) ?></strong></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>

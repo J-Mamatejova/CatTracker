@@ -1,4 +1,8 @@
 <?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ *
+ */
 
 namespace App\Controllers;
 
@@ -10,14 +14,14 @@ use Framework\Http\HttpException;
 use Exception;
 
 /**
- * Class MapController
- * Shows an interactive map page (Slovakia)
+ * Trieda MapController
+ * Zobrazuje interaktívnu mapu (Slovensko)
  */
 class MapController extends BaseController
 {
     public function authorize(Request $request, string $action): bool
     {
-        return true; // public for now
+        return true; // verejné pre teraz
     }
 
     public function index(Request $request): Response

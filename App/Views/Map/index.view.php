@@ -1,11 +1,21 @@
 <?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ *
+ */
+?>
+
+<?php
 /** @var \Framework\Support\LinkGenerator $link */
 /** @var array $locations */
 ?>
 
-<div class="container-fluid mt-3">
-    <h2 data-i18n="map.title">Mapa</h2>
-    <div id="map" style="height:75vh; width:100%; border:1px solid #ccc; border-radius:6px;"></div>
+<div class="container mt-4">
+    <h3 data-i18n="map.title">Mapa</h3>
+    <div id="map" style="height:600px;"></div>
+
+    <!-- vložiť JSON data pre JS -->
+    <script id="map-data" type="application/json"><?= json_encode($locations ?? []) ?></script>
 </div>
 
 <!-- Leaflet assets (loaded per-page) -->

@@ -1,95 +1,106 @@
 <?php
-/** @var \Framework\Auth\AppUser $user */
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ * Upravené tak, aby podporoval $user ako objekt alebo pole.
+ */
+
 /** @var \Framework\Support\LinkGenerator $link */
+/** @var mixed $user */
 /** @var int $posts_count */
 /** @var int $cats_count */
 
-// Read query params for change password result
-$changeSuccess = isset($_GET['changePwdSuccess']);
-$changeError = isset($_GET['changePwdError']);
-$changeMsg = '';
-if ($changeError && isset($_GET['changePwdMessage'])) {
-    // message may be urlencoded by controller
-    $changeMsg = urldecode($_GET['changePwdMessage']);
-}
+// read optional messages from query params (redirected by controller)
+$pwdSuccess = isset($_GET['changePwdSuccess']) && $_GET['changePwdSuccess'] == 1;
+$pwdError = isset($_GET['changePwdError']) && $_GET['changePwdError'] == 1;
+$pwdMessage = isset($_GET['changePwdMessage']) ? urldecode($_GET['changePwdMessage']) : '';
 ?>
 
 <div class="container mt-4">
-    <h2 data-i18n="profile.heading">Profil</h2>
+    <div class="row g-4">
+        <!-- LEFT: Welcome + Statistics -->
+        <div class="col-12 col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h4 class="card-title" data-i18n="profile.heading">Profil</h4>
 
-    <?php if ($user && $user->isLoggedIn()) { ?>
-        <div class="row g-4">
-            <!-- Left column: user info + stats -->
-            <div class="col-12 col-md-5">
-                <div class="card profile-card">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3" data-i18n="profile.welcome">Vitaj,</h5>
-                        <p class="h6 mb-3"><strong><?= htmlspecialchars($user->getName()) ?></strong></p>
+                    <?php
+                    // Prepare display name/email supporting object or array
+                    $displayName = '';
+                    $displayEmail = '';
+                    if (is_object($user)) {
+                        if (method_exists($user, 'getName')) $displayName = $user->getName();
+                        elseif (property_exists($user, 'name')) $displayName = $user->name;
+                        if (method_exists($user, 'getEmail')) $displayEmail = $user->getEmail();
+                        elseif (property_exists($user, 'email')) $displayEmail = $user->email;
+                    } elseif (is_array($user)) {
+                        $displayName = $user['username'] ?? $user['name'] ?? '';
+                        $displayEmail = $user['email'] ?? '';
+                    }
+                    ?>
 
-                        <div class="stats-list mt-3">
-                            <div class="stat-item mb-2">
-                                <div class="stat-label" data-i18n="profile.posts">Počet príspevkov:</div>
-                                <div class="stat-value"><strong><?= $posts_count ?? 0 ?></strong></div>
-                            </div>
-                            <div class="stat-item mb-2">
-                                <div class="stat-label" data-i18n="profile.cats">Počet pridaných mačiek:</div>
-                                <div class="stat-value"><strong><?= $cats_count ?? 0 ?></strong></div>
-                            </div>
+                    <?php if (empty($displayName) && empty($displayEmail)): ?>
+                        <p data-i18n="profile.please_login">Prosím, prihláste sa alebo si vytvorte účet.</p>
+                        <div class="mt-auto">
+                            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal" data-i18n="login.open">Prihlásiť sa</button>
+                            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#signupModal" data-i18n="signup.open">Registrovať sa</button>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    <?php else: ?>
+                        <div class="mb-3">
+                            <p class="h5 mb-1"><?= htmlspecialchars($displayName) ?></p>
+                            <?php if ($displayEmail !== ''): ?><p class="text-muted mb-0"><?= htmlspecialchars($displayEmail) ?></p><?php endif; ?>
+                        </div>
 
-            <!-- Right column: actions (change password, logout) -->
-            <div class="col-12 col-md-7">
-                <div class="card profile-card">
-                    <div class="card-body">
-                        <h5 class="card-title" data-i18n="profile.change_password">Zmeniť heslo</h5>
+                        <hr>
 
-                        <?php if ($changeSuccess): ?>
-                            <div class="mb-3">
-                                <small class="text-success" data-i18n="profile.change_password_success">Heslo bolo úspešne zmenené</small>
-                            </div>
-                        <?php elseif ($changeError): ?>
-                            <div class="mb-3">
-                                <small class="text-danger"><?= htmlspecialchars($changeMsg) ?></small>
-                            </div>
-                        <?php endif; ?>
+                        <h6 data-i18n="profile.stats">Štatistiky</h6>
+                        <div class="mt-2">
+                            <div class="mb-1"><strong data-i18n="profile.posts">Počet príspevkov:</strong> <span class="post-count"><?= intval($posts_count ?? 0) ?></span></div>
+                            <div><strong data-i18n="profile.cats">Počet pridaných mačiek:</strong> <span class="cats-count"><?= intval($cats_count ?? 0) ?></span></div>
+                        </div>
 
-                        <form method="post" action="<?= $link->url('profile.changePassword') ?>" class="mb-3">
-                            <div class="mb-3">
-                                <label class="form-label" for="old_password" data-i18n="profile.old_password">Staré heslo</label>
-                                <input id="old_password" name="old_password" type="password" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="new_password" data-i18n="profile.new_password">Nové heslo</label>
-                                <input id="new_password" name="new_password" type="password" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="new_password_confirm" data-i18n="profile.new_password_confirm">Potvrď nové heslo</label>
-                                <input id="new_password_confirm" name="new_password_confirm" type="password" class="form-control" required>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <button class="btn btn-primary" type="submit" data-i18n="profile.change_password_submit">Zmeniť heslo</button>
-                                <a class="btn btn-outline-dark ms-3" href="<?= $link->url('auth.logout') ?>" data-i18n="profile.logout">Odhlásiť sa</a>
-                            </div>
-                        </form>
-
-                        <!-- Optionally other actions could go here in future -->
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
 
-    <?php } else { ?>
-        <div class="card profile-card">
-            <div class="card-body">
-                <p data-i18n="profile.please_login">Prosím, prihláste sa alebo si vytvorte účet.</p>
-                <p>
-                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal" data-i18n="login.open">Prihlásiť sa</button>
-                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#signupModal" data-i18n="signup.open">Zaregistrovať sa</button>
-                </p>
+        <!-- RIGHT: Change password + Logout -->
+        <div class="col-12 col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title" data-i18n="profile.change_password">Zmeniť heslo</h5>
+
+                    <?php if ($pwdSuccess): ?>
+                        <div class="text-success mb-2" data-i18n="profile.change_password_success">Heslo bolo úspešne zmenené</div>
+                    <?php elseif ($pwdError): ?>
+                        <div class="text-danger mb-2"><?= htmlspecialchars($pwdMessage) ?></div>
+                    <?php endif; ?>
+
+                    <form method="post" action="<?= $link->url('profile.changePassword') ?>" class="mb-3">
+                        <div class="mb-3">
+                            <label for="old_password" class="form-label" data-i18n="profile.old_password">Staré heslo</label>
+                            <input id="old_password" type="password" name="old_password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label" data-i18n="profile.new_password">Nové heslo</label>
+                            <input id="new_password" type="password" name="new_password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new_password_confirm" class="form-label" data-i18n="profile.new_password_confirm">Potvrď nové heslo</label>
+                            <input id="new_password_confirm" type="password" name="new_password_confirm" class="form-control" required>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary" data-i18n="profile.change_password_submit">Zmeniť heslo</button>
+                        </div>
+                    </form>
+
+                    <!-- Logout button as a separate form to avoid nested forms -->
+                    <form method="post" action="<?= $link->url('user.logout') ?>" class="mt-3">
+                        <button type="submit" class="btn btn-outline-secondary" data-i18n="profile.logout">Odhlásiť sa</button>
+                    </form>
+
+                    <div class="mt-auto text-muted small">&nbsp;</div>
+                </div>
             </div>
         </div>
-    <?php } ?>
+    </div>
 </div>

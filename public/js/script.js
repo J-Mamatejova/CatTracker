@@ -204,14 +204,25 @@
                 var lat = parseFloat(loc.latitude);
                 var lon = parseFloat(loc.longitude);
                 var name = loc.cat_name || loc.meno || 'Mačka';
-                var city = loc.city || '';
 
                 if (!isFinite(lat) || !isFinite(lon)) {
                     console.warn('Skipping invalid location', loc);
                     return;
                 }
 
-                L.marker([lat, lon]).addTo(map).bindPopup((name ? (name + ' - ') : '') + city);
+                // show marker with only the cat name, and on click navigate to the cat page
+                var marker = L.marker([lat, lon]).addTo(map);
+                // tooltip/label with only the name
+                marker.bindTooltip(name, {direction: 'top', offset: [0, -8], permanent: false});
+                // clicking the marker will redirect to the cat detail/edit page
+                marker.on('click', function() {
+                    // Navigate to Cat Database index and jump to card with id=cat-<cat_id>
+                    if (loc.cat_id) {
+                        window.location.href = '?c=catdatabase#cat-' + encodeURIComponent(loc.cat_id);
+                    } else if (loc.id) {
+                        window.location.href = '?c=catdatabase#location-' + encodeURIComponent(loc.id);
+                    }
+                });
             });
         }
 
@@ -252,8 +263,8 @@
             '</h6>' +
             '<p class="card-text">' + nl2br(escapeHtml(post.content)) + '</p>' +
             '<div>' +
-            '<a href="?c=post&a=edit&id=' + post.id + '" class="btn btn-sm btn-secondary">' + escapeHtml(editText) + '</a> ' +
-            '<button class="btn btn-sm btn-danger btn-delete-post" data-id="' + post.id + '">' + escapeHtml(deleteText) + '</button>' +
+            '<a href="?c=post&a=edit&id=' + post.id + '" class="btn btn-sm btn-secondary" data-i18n="post.edit">' + escapeHtml(editText) + '</a> ' +
+            '<button class="btn btn-sm btn-danger btn-delete-post" data-id="' + post.id + '" data-i18n="post.delete">' + escapeHtml(deleteText) + '</button>' +
             '</div></div>';
         return div;
     }
@@ -277,7 +288,17 @@
                 }).then(function(json){
                     if (json && json.success && json.post) {
                         var node = renderPostHtml(json.post);
-                        if (feed) feed.insertBefore(node, feed.firstChild);
+                        if (feed) {
+                            // remove empty-state box if present
+                            var empty = feed.querySelector('.empty-state');
+                            if (empty && empty.parentNode) empty.parentNode.removeChild(empty);
+                            feed.insertBefore(node, feed.firstChild);
+                        }
+                        // increment post count if element exists
+                        var pc = document.querySelector('.post-count');
+                        if (pc) {
+                            pc.textContent = String((parseInt(pc.textContent || '0', 10) + 1));
+                        }
                         createForm.reset();
                     } else {
                         var msg = (json && json.error) ? json.error : 'Save failed';
@@ -292,14 +313,14 @@
 
         if (feed) {
             feed.addEventListener('click', function(ev){
-                var t = ev.target;
-                if (t && t.classList && t.classList.contains('btn-delete-post')) {
-                    var id = t.getAttribute('data-id');
+                var target = ev.target;
+                if (target && target.classList && target.classList.contains('btn-delete-post')) {
+                    var id = target.getAttribute('data-id');
                     if (!id) return;
                     var confirmMsg = t('post.delete_confirm') || 'Are you sure you want to delete this post?';
                     if (!confirm(confirmMsg)) return;
 
-                    var btn = t; btn.disabled = true;
+                    var btn = target; btn.disabled = true;
                     var params = new URLSearchParams(); params.append('id', id);
 
                     fetch('?c=post&a=delete', {
@@ -312,6 +333,12 @@
                         if (json && json.success) {
                             var item = feed.querySelector('.post-item[data-id="' + id + '"]');
                             if (item && item.parentNode) item.parentNode.removeChild(item);
+                            // decrement post count if present
+                            var pc = document.querySelector('.post-count');
+                            if (pc) {
+                                var newCount = parseInt(pc.textContent || '0', 10) - 1;
+                                pc.textContent = String(newCount >= 0 ? newCount : 0);
+                            }
                         } else {
                             alert('Delete failed: ' + (json && json.error ? json.error : 'Unknown'));
                             btn.disabled = false;
@@ -358,20 +385,21 @@
             'catdb.edit': 'Upraviť',
             'catdb.delete': 'Zmazať',
             'catdb.title': 'Databáza mačiek',
+            'catdb.total_label': 'Počet mačiek:',
             'confirm.delete.cat': 'Naozaj chcete zmazať túto mačku?',
             'post.title': 'Príspevky',
             'post.create': 'Vytvoriť príspevok',
             'post.create_btn': 'Vytvoriť',
+            'post.new_button': 'Nový príspevok',
+            'post.create_hint': 'Zdieľajte krátku informáciu súvisiacu s mačkou.',
+            'post.tips_title': 'Tipy',
+            'post.tip1': 'Píšte stručne a užitočne.',
+            'post.tip2': 'Spojte príspevok s existujúcou mačkou pre väčšiu užitočnosť.',
+            'post.empty_title': 'Žiadne príspevty',
+            'post.empty_text': 'Buďte prvý, kto vytvorí príspevok o mačke.',
+            'post.count_label': 'Spolu:',
             'post.edit': 'Upraviť',
             'post.delete': 'Zmazať',
-            'post.refresh': 'Obnoviť',
-            'post.delete_confirm': 'Naozaj chcete zmazať tento príspevok?',
-            'post.label.title': 'Názov',
-            'post.label.content': 'Text',
-            'post.label.cat': 'Súvisiaca mačka',
-            'post.placeholder.title': 'Názov',
-            'post.placeholder.content': 'Text príspevku',
-            'post.select.cat': 'Vybrať mačku',
             'map.title': 'Mapa',
             'profile.heading': 'Profil',
             'profile.welcome': 'Vitaj,',
@@ -419,20 +447,21 @@
             'catdb.edit': 'Edit',
             'catdb.delete': 'Delete',
             'catdb.title': 'Cat Database',
+            'catdb.total_label': 'Total cats:',
             'confirm.delete.cat': 'Are you sure you want to delete this cat?',
             'post.title': 'Feed / Posts',
             'post.create': 'Create new post',
             'post.create_btn': 'Create',
+            'post.new_button': 'New post',
+            'post.create_hint': 'Share a short update related to a cat.',
+            'post.tips_title': 'Tips',
+            'post.tip1': 'Keep posts brief and helpful.',
+            'post.tip2': 'Link posts to a cat from the database.',
+            'post.empty_title': 'No posts yet.',
+            'post.empty_text': 'Be the first to create a post about a cat.',
+            'post.count_label': 'Total:',
             'post.edit': 'Edit',
             'post.delete': 'Delete',
-            'post.refresh': 'Refresh',
-            'post.delete_confirm': 'Are you sure you want to delete this post?',
-            'post.label.title': 'Title',
-            'post.label.content': 'Content',
-            'post.label.cat': 'Related cat',
-            'post.placeholder.title': 'Title',
-            'post.placeholder.content': 'Content',
-            'post.select.cat': 'Select related cat',
             'map.title': 'Map',
             'profile.heading': 'Profile',
             'profile.welcome': 'Welcome,',
@@ -480,6 +509,29 @@
             if (!key) return;
             if (dict[key]) {
                 el.setAttribute('placeholder', dict[key]);
+            }
+        });
+
+        // Ensure anchors, buttons and spans with data-i18n get proper text (avoid disappearing labels)
+        document.querySelectorAll('a[data-i18n], button[data-i18n], span[data-i18n]').forEach(function(el){
+            const key = el.getAttribute('data-i18n');
+            if (!key) return;
+            if (dict[key]) {
+                if (dict[key].indexOf('<') !== -1) el.innerHTML = dict[key]; else el.textContent = dict[key];
+            }
+        });
+
+        // Explicitly update Edit/Delete buttons inside posts (covers dynamic entries too)
+        document.querySelectorAll('.post-item').forEach(function(item){
+            const editBtn = item.querySelector('a.btn-secondary[data-i18n]');
+            const delBtn = item.querySelector('button.btn-delete-post[data-i18n]');
+            if (editBtn) {
+                const k = editBtn.getAttribute('data-i18n') || 'post.edit';
+                editBtn.textContent = dict[k] || editBtn.textContent;
+            }
+            if (delBtn) {
+                const k2 = delBtn.getAttribute('data-i18n') || 'post.delete';
+                delBtn.textContent = dict[k2] || delBtn.textContent;
             }
         });
 

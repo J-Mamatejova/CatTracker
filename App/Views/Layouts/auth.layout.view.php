@@ -1,4 +1,12 @@
 <?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ *
+ */
+
+?>
+
+<?php
 
 /** @var string $contentHTML */
 /** @var \Framework\Core\IAuthenticator $auth */

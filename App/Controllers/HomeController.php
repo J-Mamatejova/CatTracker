@@ -1,4 +1,8 @@
 <?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ *
+ */
 
 namespace App\Controllers;
 
@@ -7,23 +11,14 @@ use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 
 /**
- * Class HomeController
- * Handles actions related to the home page and other public actions.
- *
- * This controller includes actions that are accessible to all users, including a default landing page and a contact
- * page. It provides a mechanism for authorizing actions based on user permissions.
- *
- * @package App\Controllers
+ * Trieda HomeController
+ * Obsluhuje akcie súvisiace s úvodnou stránkou a verejnými akciami.
  */
 class HomeController extends BaseController
 {
     /**
-     * Authorizes controller actions based on the specified action name.
-     *
-     * In this implementation, all actions are authorized unconditionally.
-     *
-     * @param string $action The action name to authorize.
-     * @return bool Returns true, allowing all actions.
+     * Autorizuje akcie kontroléra podľa mena akcie.
+     * V tejto implementácii sú všetky akcie povolené.
      */
     public function authorize(Request $request, string $action): bool
     {
@@ -31,11 +26,7 @@ class HomeController extends BaseController
     }
 
     /**
-     * Displays the default home page.
-     *
-     * This action serves the main HTML view of the home page.
-     *
-     * @return Response The response object containing the rendered HTML for the home page.
+     * Zobrazenie hlavnej domovskej stránky.
      */
     public function index(Request $request): Response
     {
@@ -43,12 +34,7 @@ class HomeController extends BaseController
     }
 
     /**
-     * Displays the contact page.
-     *
-     * This action serves the HTML view for the contact page, which is accessible to all users without any
-     * authorization.
-     *
-     * @return Response The response object containing the rendered HTML for the contact page.
+     * Zobrazenie kontaktného formulára/stránky.
      */
     public function contact(Request $request): Response
     {

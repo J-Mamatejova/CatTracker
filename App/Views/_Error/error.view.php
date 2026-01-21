@@ -1,4 +1,8 @@
 <?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ *
+ */
 
 /** @var \Framework\Http\HttpException $exception */
 /** @var bool $showDetail */
@@ -27,3 +31,15 @@ while ($showDetail && $exception->getPrevious() != null) { ?>
     <pre>Stack trace:<br><?= $exception->getPrevious()->getTraceAsString() ?></pre>
     <?php $exception = $exception->getPrevious(); ?>
 <?php } ?>
+
+<?php
+/** @var \Framework\Support\LinkGenerator $link */
+/** @var int $code */
+/** @var string $message */
+?>
+
+<div class="container mt-4">
+    <h3>Error <?= htmlspecialchars($code) ?></h3>
+    <div class="alert alert-danger"><?= htmlspecialchars($message) ?></div>
+    <a href="<?= $link->url('home.index') ?>">Back to home</a>
+</div>

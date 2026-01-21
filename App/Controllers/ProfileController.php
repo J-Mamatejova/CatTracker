@@ -1,4 +1,8 @@
 <?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ *
+ */
 
 namespace App\Controllers;
 
@@ -13,13 +17,13 @@ use Framework\Http\Responses\RedirectResponse;
 use Framework\Http\HttpException;
 
 /**
- * Class ProfileController
- * Simple controller to display the profile page.
+ * Trieda ProfileController
+ * Jednoduchý kontrolér na zobrazenie profilovej stránky.
  */
 class ProfileController extends BaseController
 {
     /**
-     * Allow access to profile page (view handles auth-specific UI).
+     * Povoliť prístup k profilovej stránke (view zobrazuje UI podľa autentifikácie).
      */
     public function authorize(Request $request, string $action): bool
     {
@@ -27,7 +31,7 @@ class ProfileController extends BaseController
     }
 
     /**
-     * Show profile index view with user stats when logged in.
+     * Zobraziť profil (index) s používateľskými štatistikami
      */
     public function index(Request $request): Response
     {
@@ -52,7 +56,7 @@ class ProfileController extends BaseController
     }
 
     /**
-     * Change password (POST)
+     * Zmena hesla (POST)
      */
     public function changePassword(Request $request): Response
     {

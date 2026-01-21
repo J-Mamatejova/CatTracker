@@ -1,6 +1,10 @@
 <?php
+/**
+ * Tento súbor bol upravený za pomoci generatívnej umelej inteligencie (AI).
+ *
+ */
 
-/** @var \Framework\Support\LinkGenerator $link */
+ /** @var \Framework\Support\LinkGenerator $link */
 ?>
 
 <div class="row">
@@ -19,6 +23,6 @@
 </div>
 <div class="row mt-3">
     <div class="col">
-        <a href="<?= $link->url("home.index") ?>">Back to main page</a>
+        <a href="<?= $link->url("home.index") ?>" data-i18n="common.close">Back to main page</a>
     </div>
 </div>
